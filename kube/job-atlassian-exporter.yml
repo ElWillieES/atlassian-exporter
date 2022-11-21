@@ -1,0 +1,13 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: atlassian-exporter
+  namespace: exporter
+spec:
+  template:
+    spec:
+      containers:
+      - name: atlassian-exporter
+        image: localhost:5000/atlassian-exporter
+      restartPolicy: Never
+
