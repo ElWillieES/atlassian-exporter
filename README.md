@@ -12,6 +12,10 @@ Este repo se ha creado para complementar el Post [Exportando datos de Atlassian 
 
 Para la ejecución sobre MiniKube te puede interesar leer los Posts [Introducción a MiniKube e instalación en Windows 11](https://elwillie.es/2022/11/15/kubernetes-introduccion-a-minikube-e-instalacion-en-windows-11/) y [Administración fácil y rápida con K9s](https://elwillie.es/2022/11/15/kubernetes-administracion-facil-y-rapida-con-k9s/).
 
+**Puedes apoyar mi trabajo haciendo "☆ Star" en el repo o nominarme a "GitHub Star"**. Muchas gracias :-) 
+
+[![GitHub Star](https://img.shields.io/badge/GitHub-Nominar_a_star-yellow?style=for-the-badge&logo=github&logoColor=white&labelColor=101010)](https://stars.github.com/nominate/)
+
 
 ## Arquitectura de la Solución
 
@@ -91,10 +95,6 @@ python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=
 
 ## Otros detalles de interés
 
-Puedes apoyar mi trabajo haciendo "☆ Star" en el repo o nominarme a "GitHub Star". Gracias !!! 
-
-[![GitHub Star](https://img.shields.io/badge/GitHub-Nominar_a_star-yellow?style=for-the-badge&logo=github&logoColor=white&labelColor=101010)](https://stars.github.com/nominate/)
-
 Si te interesa aprender Python, tienes disponibles los siguientes [cursos gratuitos de Python en Edube - OpenEDG](https://edube.org/):
 
 * Python Essentials 1
@@ -156,7 +156,7 @@ Prefijos:
 ```git
 feat: Nueva característica
 fix: Corrección a un error
-docs: Documentació
+doc: Documentación
 style: Cambios de formato (guía de estilo)
 refactor: Renombrar una variable, simplificar un método, etc…
 test: Añadir o modificar tests
@@ -315,6 +315,6 @@ kubectl delete ns exporter
 
 # Contactos
 
-| Nombre        | Posición en el Proyecto         | Email                                                |
-|---------------| ------------------------------- |------------------------------------------------------|
-| **El Willie** | Product Owner                   | [elwillieES@gmail.com](mailto:elwillieES@gmail.com)  |
+| Nombre        | Posición en el Proyecto | Email                                                |
+|---------------|-------------------------|------------------------------------------------------|
+| **El Willie** | Brownie Manager         | [elwillieES@gmail.com](mailto:elwillieES@gmail.com)  |
