@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: atlassian-exporter-vol
+  namespace: exporter
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 2Gi
+  hostPath:
+    path: /data/atlassian-exporter-vol/
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: atlassian-exporter-pvc
+  namespace: exporter
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ""
+  volumeName: atlassian-exporter-vol
+  resources:
+    requests:
+      storage: 2Gi

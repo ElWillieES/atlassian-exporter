@@ -6,3 +6,14 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
+    volumes:
+      - d:/code/elwillie/atlassian-exporter/app/export:/usr/src/app/export
+    command: >
+      bash -c "python atlassian-exporter.py -c atlassian_conn_elwillie.json -a export_all_jira_users
+      && python atlassian-exporter.py -c atlassian_conn_elwillie.json -a export_all_jira_groups_and_members
+      && python atlassian-exporter.py -c atlassian_conn_elwillie.json -a export_all_jira_projects
+      && python atlassian-exporter.py -c atlassian_conn_elwillie.json -a export_all_confluence_spaces
+      && python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_users
+      && python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_groups_and_members
+      && python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_projects
+      && python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_repos"

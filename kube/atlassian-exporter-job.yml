@@ -1,0 +1,81 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: atlassian-exporter
+  namespace: exporter
+spec:
+  template:
+    spec:
+      containers:
+      - name: atlassian-exporter-jira-users
+        image: localhost:5000/atlassian-exporter
+        command: ["python", "atlassian-exporter.py", "--configfile=atlassian_conn_elwillie.json", "--action=export_all_jira_users"]
+        volumeMounts:
+        - name: atlassian-exporter-conf
+          mountPath: /usr/src/app/config
+        - name: atlassian-exporter-vol
+          mountPath: /usr/src/app/export
+      - name: atlassian-exporter-jira-groups-and-members
+        image: localhost:5000/atlassian-exporter
+        command: ["python", "atlassian-exporter.py", "--configfile=atlassian_conn_elwillie.json", "--action=export_all_jira_groups_and_members"]
+        volumeMounts:
+        - name: atlassian-exporter-conf
+          mountPath: /usr/src/app/config
+        - name: atlassian-exporter-vol
+          mountPath: /usr/src/app/export
+      - name: atlassian-exporter-jira-projects
+        image: localhost:5000/atlassian-exporter
+        command: ["python", "atlassian-exporter.py", "--configfile=atlassian_conn_elwillie.json", "--action=export_all_jira_projects"]
+        volumeMounts:
+        - name: atlassian-exporter-conf
+          mountPath: /usr/src/app/config
+        - name: atlassian-exporter-vol
+          mountPath: /usr/src/app/export
+      - name: atlassian-exporter-confluence-spaces
+        image: localhost:5000/atlassian-exporter
+        command: ["python", "atlassian-exporter.py", "--configfile=atlassian_conn_elwillie.json", "--action=export_all_confluence_spaces"]
+        volumeMounts:
+        - name: atlassian-exporter-conf
+          mountPath: /usr/src/app/config
+        - name: atlassian-exporter-vol
+          mountPath: /usr/src/app/export
+      - name: atlassian-exporter-bitbucket-users
+        image: localhost:5000/atlassian-exporter
+        command: ["python", "atlassian-exporter.py", "--configfile=bitbucket_conn_elwillie.json", "--action=export_all_bitbucket_users"]
+        volumeMounts:
+        - name: atlassian-exporter-conf
+          mountPath: /usr/src/app/config
+        - name: atlassian-exporter-vol
+          mountPath: /usr/src/app/export
+      - name: atlassian-exporter-bitbucket-groups-and-members
+        image: localhost:5000/atlassian-exporter
+        command: ["python", "atlassian-exporter.py", "--configfile=bitbucket_conn_elwillie.json", "--action=export_all_bitbucket_groups_and_members"]
+        volumeMounts:
+        - name: atlassian-exporter-conf
+          mountPath: /usr/src/app/config
+        - name: atlassian-exporter-vol
+          mountPath: /usr/src/app/export
+      - name: atlassian-exporter-bitbucket-projects
+        image: localhost:5000/atlassian-exporter
+        command: ["python", "atlassian-exporter.py", "--configfile=bitbucket_conn_elwillie.json", "--action=export_all_bitbucket_projects"]
+        volumeMounts:
+        - name: atlassian-exporter-conf
+          mountPath: /usr/src/app/config
+        - name: atlassian-exporter-vol
+          mountPath: /usr/src/app/export
+      - name: atlassian-exporter-bitbucket-repos
+        image: localhost:5000/atlassian-exporter
+        command: ["python", "atlassian-exporter.py", "--configfile=bitbucket_conn_elwillie.json", "--action=export_all_bitbucket_repos"]
+        volumeMounts:
+        - name: atlassian-exporter-conf
+          mountPath: /usr/src/app/config
+        - name: atlassian-exporter-vol
+          mountPath: /usr/src/app/export
+      volumes:
+      - name: atlassian-exporter-conf
+        configMap:
+          name: atlassian-exporter-conf
+      - name: atlassian-exporter-vol
+        persistentVolumeClaim:
+          claimName: atlassian-exporter-pvc
+      restartPolicy: Never

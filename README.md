@@ -15,7 +15,79 @@ Para la ejecución sobre MiniKube te puede interesar leer los Posts [Introducci�
 
 ## Arquitectura de la Solución
 
-Se trata de un simple programa Python que accede a la API de Atlassian Cloud, para poder descargar los datos que necesita, generando ficheros CSV que sean fáciles de importar, para su posterior análisis y tratamiento.
+Se trata de un programa de línea de comandos en Python, que accede a las APIs de Atlassian Cloud y Bitbucket Cloud, para descargar los datos que necesita, generando ficheros CSV en la carpeta ./export/ para que puedan ser utilizados para un posterior análisis y tratamiento.
+
+### Información que se desea obtener
+
+De Jira Software, Jira Service Desk y Confluence, se desea obtener la siguiente información:
+
+* Usuarios, grupos, y pertenencia de usuarios a grupos
+* Proyectos de Jira
+* Espacios de Confluence
+
+De Bitbucket se desea obtener la siguiente información:
+
+* Usuarios, grupos, y pertenencia de usuarios a grupos
+* Proyectos, repos, y pertencia de repos a proyectos.
+
+
+### Introducción a las APIs de Atlassian
+
+Dentro de [Atlassian Cloud developer documentation](https://developer.atlassian.com/cloud/), tenemos varios enlaces de interés, incluyendo a la documentación de varias APIs de Atlassian Cloud como las siguientes:
+
+* [Jira Cloud Platform - REST API](https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/) y [Confluence Cloud - REST API](https://developer.atlassian.com/cloud/confluence/rest/v1/intro/): Para acceder podemos utilizar un **API token** que generaremos desde nuestro perfil de Atlassian (**Account settings**), es decir, utilizaremos **Autenticación Básica**.
+* [Bitbucket Cloud - REST API](https://developer.atlassian.com/cloud/bitbucket/rest/intro/): Para acceder podemos utilizar una **App Password**, que generaremos desde nuestro perfil de Bitbucket (**Personal settigns**), es decir, utilizaremos **Autenticación Básica**.
+
+La antigua API v1 de Bitbucket, aunque está deprecada, también nos resulta de utilidad, por ejemplo para obtener los Grupos de Bitbucket de forma sencilla.
+
+* [Use Bitbucket REST API version 1](https://support.atlassian.com/bitbucket-cloud/docs/use-bitbucket-rest-api-version-1/)
+
+La mayoría de las API están paginadas, pero no todas, y de las que están paginadas, no todas paginan igual (es decir, utilizar diferentes parámetros para poder paginar, como start ó startAt, aunque en el fondo son muy parecidas). 
+
+
+### Ejemplos de configuración y ejecución
+
+Es un programa de línea de comandos, que espera recibir dos parámetros:
+
+* **Acción que se desea realizar**. Básicamente es indicar qué datos deseamos exportar, que se generarán en la **carpeta ./export/**. En función de qué datos necesitemos, y de qué licencias de Atlassian tengamos, seleccionaremos las acciones que necesitemos. Si queremos exportar varios datos (ej: usuarios de Atlassian y usuarios de Bitbucket) bastará con ejecutarlo dos veces, en cada una especificando una acción.
+* **Fichero de configuración**. Proporciona los datos de conexión en un fichero json con una formato determinado ubicado en la **carpeta ./config/**, que dependerá de la acción (datos de conexión a Atlassian Clouod o a Bitbucket Cloud).
+
+El fichero JSON de configuración para la conexión con Atlassian Cloud (ej: **./config/atlassian_conn_elwillie.json**) será similar al siguiente, en el que especificaremos el nombre de nuestro Site de Atlassian, usuario (email) y un Token. Es recomendable utilizar las credenciales de un usuario con **permisos Site Admin y Confluence Admin**, para garantizar que tiene permisos tanto para los datos de usuarios y grupos, como para todos los Proyectos de Jira y Espacios de Confluence. 
+```
+{
+  "atlassian-site": "willie",
+  "atlassian-user": "alias@gmail.com",
+  "atlassian-token": "wSCqpbo7OgDXDBMRSjZQAE59"
+}
+```
+
+El fichero JSON de configuración para la conexión con Bitbucket Cloud (ej: **./config/bitbucket_conn_elwillie.json**) será similar al siguiente, en el que especificaremos el nombre de nuestro Workspace, usuario, y Token (App Password). Es recomendable utilizar las credenciales de un usuario con **permisos Admin**, para garantizar que tiene permisos tanto para los datos de los usuarios y grupos, como de todos los Proyectos y Repos. 
+```
+{
+  "bitbucket-workspace": "willie",
+  "bitbucket-user": "willie",
+  "bitbucket-token": "ATBBsxRs4jqsAdbsRkjNb7JDZrVv436FE68A"
+}
+```
+
+**Las carpetas ./config/ y ./export/ están añadidas al fichero .gitignore**, para evitar que se puedan subir tanto credenciales como datos a los repos remotos de Git, tanto por privacidad, como por intentar mantener la casa limpia (evitar subir exportaciones de diferentes pruebas, que no aportan valor en el repo remoto). Sin embargo, si se incluiran al construir nuestra imagen Docker en local, lo que nos permitirá utilizar nuestras configuraciones tanto para ejecutar en local con Python como en local con Docker, Docker Compose, o Kubernetes.
+
+Si tenemos varios Sites de Atlassian y/o varios Workspaces de Bitbucket, podemos crear múltiples ficheros de configuración (los que necesitemos) y ejecutar varias veces el programa.
+
+A continuación se muestra un ejemplo de uso.
+
+```
+python atlassian-exporter.py -c atlassian_conn_elwillie.json -a export_all_jira_groups_and_members
+python atlassian-exporter.py -c atlassian_conn_elwillie.json -a export_all_jira_users
+python atlassian-exporter.py -c atlassian_conn_elwillie.json -a export_all_jira_projects
+python atlassian-exporter.py -c atlassian_conn_elwillie.json -a export_all_confluence_spaces
+
+python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_users
+python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_groups_and_members
+python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_projects
+python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_repos
+```
+
 
 ## Otros detalles de interés
 
@@ -34,12 +106,6 @@ Si te interesa aprender Python, tienes disponibles los siguientes [cursos gratui
 * Python Advanced 5 – File Processing
 
 Otro recurso muy interesante es [Real Python](https://realpython.com/), donde podrás encontrar tutoriales, baterías de preguntas para ponerte a prueba (quizzes), etc.
-
-Dentro de [Atlassian Cloud developer documentation](https://developer.atlassian.com/cloud/), tenemos varios enlaces de interés, incluyendo a la documentación de varias APIs de Atlassian Cloud como las siguientes:
-
-* [Jira Cloud Platform - REST API](https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/)
-* [Confluence Cloud - REST API](https://developer.atlassian.com/cloud/confluence/rest/v1/intro/)
-* [Bitbucket Cloud - REST API](https://developer.atlassian.com/cloud/bitbucket/rest/intro/)
 
 En mi Blog personal ([El Willie - The Geeks invaders](https://elwillie.es)) y en mi perfil de GitHub, encontrarás más información sobre mi, y sobre los contenidos de tecnología que comparto con la comunidad.
 
@@ -132,26 +198,62 @@ Iconos:
 
 Se puede ejecutar la aplicación en local con Docker. 
 
-Los siguientes comandos ejecutados en la raíz del Proyecto, muestran cómo crear una imagen en local, listar las imágenes que tenemos disponible sen local, y cómo ejecutar un contenedor con nuestra imagen.
+Los siguientes comandos ejecutados en la raíz del Proyecto, muestran:
+* Cómo **crear una imagen** en local con docker build. Antes de construir la imagen, borramos el contenido de app/export/, por si tuviéramos ficheros de pruebas de ejecución, para no engordar y ensuciar la imagen.
+* Cómo listar las imágenes que tenemos disponibles en local. Deberá aparecer la que acabamos de crear.
+* **Cómo ejecutar un contenedor con nuestra imagen, con el comando deseado**. Como nuestra aplicación es de línea de comandos, se incluyen varios ejemplos, en cada uno de los cuales se indica como parámetro el fichero de configuración que necesita (debe existir en la carpeta /usr/src/app/config/ del contenedor) y la acción a realizar (hay varias posible, según los datos que queramos exportar, que dependerá de los productos que tengamos contratados). Como se van a generar los ficheros de exportación en la carpeta del contenedor /usr/src/app/export, y los contenedores son efímeros, **utilizamos un volumen sobre /usr/src/app/export para que los datos persistan** y además podamos acceder a los ficheros que hemos generado. Es necesario especificar la ruta absoluta del host (ajustarla con la de cada uno).  
 
 ```shell
+rm app/export/*
+
 docker build -t atlassian-exporter .
 docker images
-docker run --rm atlassian-exporter
+
+docker run -v d:/code/elwillie/atlassian-exporter/app/export:/usr/src/app/export --rm atlassian-exporter python atlassian-exporter.py -c atlassian_conn_elwillie.json -a export_all_jira_users
+docker run -v d:/code/elwillie/atlassian-exporter/app/export:/usr/src/app/export --rm atlassian-exporter python atlassian-exporter.py -c atlassian_conn_elwillie.json -a export_all_jira_groups_and_members
+docker run -v d:/code/elwillie/atlassian-exporter/app/export:/usr/src/app/export --rm atlassian-exporter python atlassian-exporter.py -c atlassian_conn_elwillie.json -a export_all_jira_projects
+docker run -v d:/code/elwillie/atlassian-exporter/app/export:/usr/src/app/export --rm atlassian-exporter python atlassian-exporter.py -c atlassian_conn_elwillie.json -a export_all_confluence_spaces
+
+docker run -v d:/code/elwillie/atlassian-exporter/app/export:/usr/src/app/export --rm atlassian-exporter python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_users
+docker run -v d:/code/elwillie/atlassian-exporter/app/export:/usr/src/app/export --rm atlassian-exporter python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_groups_and_members
+docker run -v d:/code/elwillie/atlassian-exporter/app/export:/usr/src/app/export --rm atlassian-exporter python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_projects
+docker run -v d:/code/elwillie/atlassian-exporter/app/export:/usr/src/app/export --rm atlassian-exporter python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_repos
+
 ```
+
+Podemos arrancar una sesión interativa de Bash sobre un Contendor con nuestra imagen Docker, para de este modo, analizar mejor incidencias y problemas que nos puedan surgir, depurar, etc. Suele ser bastante útil.
+
+En el siguiente ejemplo, arrancamos una sesión bash sobre un contenedor con nuestra imagen y un volumen mapeando la carpeta export de nuestro portátil con la del contenedor, ejecutamos atlassian-exporter para exportar los usuarios de jira, y salimos del contenedor.
+
+```shell
+docker run --rm -v d:/code/elwillie/atlassian-exporter/app/export:/usr/src/app/export -it atlassian-exporter /bin/bash
+python atlassian-exporter.py -c atlassian_conn_elwillie.json -a export_all_jira_users
+exit
+```
+
 
 ## Con Docker Compose
 
-El siguiente comando ejecutado en la raíz del Proyecto, muestra cómo ejecutar nuestra aplicación con Docker Compose. 
+El siguiente comando ejecutado en la raíz del Proyecto, muestra cómo compilar (es decir, construir la imagen Docker) y ejecutar atlassian-exporter con Docker Compose, así como la forma de poder comprobar los logs de su ejecución.
+
+Si observamos el fichero **docker-compose.yml**, podemos ver que incluye varias ejecuciones de atlassian-exporter, para las diferentes exportaciones que queremos realizar. Además, utiliza un volumen mapeando la carpeta export de nuestro portátil con la del contenedor, para así poder acceder a los datos generados desde nuestro portátil, después de su ejecución. 
 
 ```shell
 docker-compose -f docker-compose.yml up --build -d
+docker-compose -f docker-compose.yml logs
 ```
 
 
 # Kubernetes - Ejecución en local (MiniKube)
 
-Se puede ejecutar la aplicación en local con Kubernetes, si tienes instalado MiniKube.
+Se puede ejecutar la aplicación en local con Kubernetes, si tienes instalado MiniKube. Para ampliar información te puede interesar leer [Introducción a MiniKube e instalación en Windows 11](https://elwillie.es/2022/11/15/kubernetes-introduccion-a-minikube-e-instalacion-en-windows-11/)
+
+Los manifiestos de Kubernetes, están en la carpeta kube, y son los siguientes:
+
+* **exporter-ns.yml**. Para la creación del namespace exporter, donde desplegaremos nuestra aplicación.
+* **atlassian-exporter-conf.vol**. Permite crear un Volumen, es decir, un PersistentVolume de tipo hostPath y un PersistentVolumeClaim, que mapearemos a nuestro Job para tener persistencia entre ejecuciones. Los datos persistirán dentro del almacenamiento de MiniKube (nos podemos conectar con minikube ssh para verlos). 
+* **atlassian-exporter-conf.yml**. Permite crear un ConfigMap, que contiene los ficheros JSON de configuración que necesitamos para conectarnos a nuestras instancias de Atlassian Cloud y Bitbucket Cloud. Los mapearemos a los contenedores sobre el directorio /usr/src/app/config sobrescribiendo los ficheros que pudiera haber en la imagen original.
+* **atlassian-exporter-job.yml**. Consiste en un Job que incluye un contenedor para cada comando que queremos ejecutar (en nuestro caso de ejemplo son ocho, para exportar todos los datos de Jira, Confluence, y Bitbucket), y mapea tanto el ConfigMap anterior como el volumen persistente.
 
 Los siguientes comandos ejecutados en la raíz del Proyecto, muestran cómo tagear la Imagen Docker para subirla al Registry local de MiniKube.
 
@@ -164,9 +266,44 @@ Realizado esto, en la ventana Terminal de PyCharm, podemos ejecutar los siguient
 
 ```shell
 cd kube
-kubectl apply -f ns-exporter.yml
-kubectl apply -f job-atlassian-exporter.yml
-kubectl logs job/atlassian-exporter -n exporter
+kubectl apply -f exporter-ns.yml
+kubectl apply -f atlassian-exporter-vol.yml
+kubectl get PersistentVolume -n exporter -o wide
+kubectl get PersistentVolumeClaim -n exporter -o wide
+
+kubectl apply -f atlassian-exporter-conf.yml
+kubectl apply -f atlassian-exporter-job.yml
+
+kubectl get jobs -n exporter
+kubectl describe jobs atlassian-exporter -n exporter
+
+kubectl logs job/atlassian-exporter -c atlassian-exporter-jira-users -n exporter
+kubectl logs job/atlassian-exporter -c atlassian-exporter-jira-groups-and-members -n exporter
+kubectl logs job/atlassian-exporter -c atlassian-exporter-jira-projects -n exporter
+kubectl logs job/atlassian-exporter -c atlassian-exporter-confluence-spaces -n exporter
+
+kubectl logs job/atlassian-exporter -c atlassian-exporter-bitbucket-users -n exporter
+kubectl logs job/atlassian-exporter -c atlassian-exporter-bitbucket-groups-and-members -n exporter
+kubectl logs job/atlassian-exporter -c atlassian-exporter-bitbucket-projects -n exporter
+kubectl logs job/atlassian-exporter -c atlassian-exporter-bitbucket-repos -n exporter
+```
+
+Si queremos ver o incluso editar el ConfigMap, podemos utilizar el siguiente comando.
+
+```shell
+kubectl edit configmap atlassian-exporter-conf -n exporter
+```
+
+También podemos crear un nuevo contenedor al vuelo, con nuestra imagen, con una sesión bash a la que conectarnos para poder depurar y hacer pruebas.
+
+```shell
+kubectl run -it --rm atlassian-exporter --image=localhost:5000/atlassian-exporter -n exporter -- /bin/bash
+```
+
+Si necesitamos volver a crear el Job, tendremos que eliminarlo antes, para lo cual podemos utilizar un comando como el siguiente.
+
+```shell
+kubectl delete job atlassian-exporter -n exporter
 ```
 
 Al finalizar podemos eliminar el namespace de Kubernetes, para eliminar todos los recursos y dejar "la casa limpia".
