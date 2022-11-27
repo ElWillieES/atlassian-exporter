@@ -8,7 +8,7 @@ Atlassian Exporter es un proyecto desarrollado con Python y PyCharm, con el obje
 
 Estos datos pueden posteriormente importarse en una base de datos para su análisis, pudiendo utilizarse para diferentes propósitos, como el inventariado o el reparto de costes.
 
-Este repo se ha creado para complementar el Post [Exportando datos de Atlassian Cloud con Python](https://elwillie.es/2022/11/09/xxx/) del Blog [El Willie - The Geeks invaders](https://elwillie.es)
+Este repo se ha creado para complementar el Post [Python - Exportando datos de Jira, Confluence y Bitbucket con atlassian-exporter](https://elwillie.es/2022/11/28/python-exportando-datos-de-jira-confluence-y-bitbucket-con-atlassian-exporter/) del Blog [El Willie - The Geeks invaders](https://elwillie.es)
 
 Para la ejecución sobre MiniKube te puede interesar leer los Posts [Introducción a MiniKube e instalación en Windows 11](https://elwillie.es/2022/11/15/kubernetes-introduccion-a-minikube-e-instalacion-en-windows-11/) y [Administración fácil y rápida con K9s](https://elwillie.es/2022/11/15/kubernetes-administracion-facil-y-rapida-con-k9s/).
 
@@ -25,7 +25,7 @@ Se trata de un programa de línea de comandos en Python, que accede a las APIs d
 
 De Jira Software, Jira Service Desk y Confluence, se desea obtener la siguiente información:
 
-* Usuarios, grupos, y pertenencia de usuarios a grupos
+* Usuarios, grupos, y pertenencia de usuarios a grupos (de aquí se puede obtener la asignación de Licencias)
 * Proyectos de Jira
 * Espacios de Confluence
 
@@ -54,7 +54,7 @@ La mayoría de las API están paginadas, pero no todas, y de las que están pagi
 Es un programa de línea de comandos, que espera recibir dos parámetros:
 
 * **Acción que se desea realizar**. Básicamente es indicar qué datos deseamos exportar, que se generarán en la **carpeta ./export/**. En función de qué datos necesitemos, y de qué licencias de Atlassian tengamos, seleccionaremos las acciones que necesitemos. Si queremos exportar varios datos (ej: usuarios de Atlassian y usuarios de Bitbucket) bastará con ejecutarlo dos veces, en cada una especificando una acción.
-* **Fichero de configuración**. Proporciona los datos de conexión en un fichero json con una formato determinado ubicado en la **carpeta ./config/**, que dependerá de la acción (datos de conexión a Atlassian Clouod o a Bitbucket Cloud).
+* **Fichero de configuración**. Proporciona los datos de conexión en un fichero json con una formato determinado ubicado en la **carpeta ./config/**, que dependerá de la acción (datos de conexión a Atlassian Cloud o a Bitbucket Cloud).
 
 El fichero JSON de configuración para la conexión con Atlassian Cloud (ej: **./config/atlassian_conn_elwillie.json**) será similar al siguiente, en el que especificaremos el nombre de nuestro Site de Atlassian, usuario (email) y un Token. Es recomendable utilizar las credenciales de un usuario con **permisos Site Admin y Confluence Admin**, para garantizar que tiene permisos tanto para los datos de usuarios y grupos, como para todos los Proyectos de Jira y Espacios de Confluence. 
 ```
@@ -74,15 +74,15 @@ El fichero JSON de configuración para la conexión con Bitbucket Cloud (ej: **.
 }
 ```
 
-**Las carpetas ./config/ y ./export/ están añadidas al fichero .gitignore**, para evitar que se puedan subir tanto credenciales como datos a los repos remotos de Git, tanto por privacidad, como por intentar mantener la casa limpia (evitar subir exportaciones de diferentes pruebas, que no aportan valor en el repo remoto). Sin embargo, si se incluiran al construir nuestra imagen Docker en local, lo que nos permitirá utilizar nuestras configuraciones tanto para ejecutar en local con Python como en local con Docker, Docker Compose, o Kubernetes.
+**Las carpetas ./config/ y ./export/ están añadidas al fichero .gitignore**, para evitar que se puedan subir tanto credenciales como datos a los repos remotos de Git, tanto por privacidad, como por intentar mantener el repo limpi (evitar subir exportaciones de diferentes pruebas, que no aportan valor en el repo remoto). Sin embargo, si se incluiran al construir nuestra imagen Docker en local, lo que nos permitirá utilizar nuestras configuraciones tanto para ejecutar en local con Python como en local con Docker, Docker Compose, o Kubernetes.
 
 Si tenemos varios Sites de Atlassian y/o varios Workspaces de Bitbucket, podemos crear múltiples ficheros de configuración (los que necesitemos) y ejecutar varias veces el programa.
 
 A continuación se muestra un ejemplo de uso.
 
 ```
-python atlassian-exporter.py -c atlassian_conn_elwillie.json -a export_all_jira_groups_and_members
 python atlassian-exporter.py -c atlassian_conn_elwillie.json -a export_all_jira_users
+python atlassian-exporter.py -c atlassian_conn_elwillie.json -a export_all_jira_groups_and_members
 python atlassian-exporter.py -c atlassian_conn_elwillie.json -a export_all_jira_projects
 python atlassian-exporter.py -c atlassian_conn_elwillie.json -a export_all_confluence_spaces
 
