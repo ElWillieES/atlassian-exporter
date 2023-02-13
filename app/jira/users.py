@@ -53,7 +53,7 @@ def export_all_jira_groups_members(atlassian_site, atlassian_user, atlassian_tok
         while first_call == True or start_at < number_of_results:
             #print('{} - INFO - Getting group members for group {} starting at index {}'.format(datetime.datetime.now().strftime("%Y%m%d %H:%M:%S"), group['name'], str(start_at)))
             group_members_response = requests.get(
-                'https://{}.atlassian.net/rest/api/3/group/member?groupname={}&startAt={}&maxResults={}'.format(atlassian_site, group['name'], str(start_at), str(max_results)),
+                'https://{}.atlassian.net/rest/api/3/group/member?groupId={}&startAt={}&maxResults={}'.format(atlassian_site, group['groupId'], str(start_at), str(max_results)),
                 auth=HTTPBasicAuth(atlassian_user, atlassian_token)
             ).json()
 

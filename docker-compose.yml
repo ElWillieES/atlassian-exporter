@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: ./Dockerfile
     volumes:
-      - d:/code/elwillie/atlassian-exporter/app/export:/usr/src/app/export
+      - ./app/export:/usr/src/app/export
     command: >
       bash -c "python atlassian-exporter.py -c atlassian_conn_elwillie.json -a export_all_jira_users
       && python atlassian-exporter.py -c atlassian_conn_elwillie.json -a export_all_jira_groups_and_members
