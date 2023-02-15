@@ -93,6 +93,6 @@ def export_all_bitbucket_repos(bitbucket_workspace, bitbucket_user, bitbucket_to
     export_csv(
         export_filename,
         repos_list,
-        ['date', 'repo_name', 'repo_slug', 'description', 'is_private', 'fork_policy', 'created_on', 'updated_on', 'size', 'has_issues', 'has_wiki', 'uuid'],
-        ['date', 'repo_name', 'repo_slug', 'description', 'is_private', 'fork_policy', 'created_on', 'updated_on', 'size', 'has_issues', 'has_wiki', 'uuid']
+        ['date', 'project_key', 'project_uuid', 'project_name', 'repo_name', 'repo_slug', 'description', 'is_private', 'fork_policy', 'created_on', 'updated_on', 'size', 'has_issues', 'has_wiki', 'uuid'],
+        ['date', 'project_key', 'project_uuid', 'project_name', 'repo_name', 'repo_slug', 'description', 'is_private', 'fork_policy', 'created_on', 'updated_on', 'size', 'has_issues', 'has_wiki', 'uuid']
     )
