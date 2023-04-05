@@ -18,7 +18,6 @@ def export_all_jira_projects(atlassian_site, atlassian_user, atlassian_token, ex
             auth=HTTPBasicAuth(atlassian_user, atlassian_token)
         ).json()
 
-        number_of_results = len(projects_response)
         for project in projects_response['values']:
             projects_list.append({
                 'date': datetime.datetime.now().strftime("%Y%m%d"),
