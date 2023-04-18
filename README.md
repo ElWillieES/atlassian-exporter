@@ -222,7 +222,8 @@ docker run -v d:/code/elwillie/atlassian-exporter/app/export:/usr/src/app/export
 docker run -v d:/code/elwillie/atlassian-exporter/app/export:/usr/src/app/export --rm atlassian-exporter python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_groups_and_members
 docker run -v d:/code/elwillie/atlassian-exporter/app/export:/usr/src/app/export --rm atlassian-exporter python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_projects
 docker run -v d:/code/elwillie/atlassian-exporter/app/export:/usr/src/app/export --rm atlassian-exporter python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_repos
-
+docker run -v d:/code/elwillie/atlassian-exporter/app/export:/usr/src/app/export --rm atlassian-exporter python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_repos_commits
+docker run -v d:/code/elwillie/atlassian-exporter/app/export:/usr/src/app/export --rm atlassian-exporter python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_repos_branches
 ```
 
 Podemos arrancar una sesión interativa de Bash sobre un Contendor con nuestra imagen Docker, para de este modo, analizar mejor incidencias y problemas que nos puedan surgir, depurar, etc. Suele ser bastante útil.
@@ -319,6 +320,6 @@ kubectl delete ns exporter
 
 # Contactos
 
-| Nombre        | Posición en el Proyecto | Email                                                |
-|---------------|-------------------------|------------------------------------------------------|
-| **El Willie** | Brownie Manager         | [elwillieES@gmail.com](mailto:elwillieES@gmail.com)  |
+| Nombre        | Email                                                |
+|---------------|------------------------------------------------------|
+| **El Willie** | [elwillieES@gmail.com](mailto:elwillieES@gmail.com)  |

@@ -16,4 +16,6 @@ services:
       && python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_users
       && python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_groups_and_members
       && python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_projects
-      && python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_repos"
+      && python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_repos
+      && python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_repos_commits
+      && python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_repos_branches"

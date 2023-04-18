@@ -71,6 +71,22 @@ spec:
           mountPath: /usr/src/app/config
         - name: atlassian-exporter-vol
           mountPath: /usr/src/app/export
+      - name: atlassian-exporter-bitbucket-repos-branches
+        image: localhost:5000/atlassian-exporter
+        command: ["python", "atlassian-exporter.py", "--configfile=bitbucket_conn_elwillie.json", "--action=export_all_bitbucket_repos_branches"]
+        volumeMounts:
+        - name: atlassian-exporter-conf
+          mountPath: /usr/src/app/config
+        - name: atlassian-exporter-vol
+          mountPath: /usr/src/app/export
+      - name: atlassian-exporter-bitbucket-repos-commits
+        image: localhost:5000/atlassian-exporter
+        command: ["python", "atlassian-exporter.py", "--configfile=bitbucket_conn_elwillie.json", "--action=export_all_bitbucket_repos_commits"]
+        volumeMounts:
+        - name: atlassian-exporter-conf
+          mountPath: /usr/src/app/config
+        - name: atlassian-exporter-vol
+          mountPath: /usr/src/app/export
       volumes:
       - name: atlassian-exporter-conf
         configMap:
