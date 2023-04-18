@@ -6,33 +6,52 @@ from util.export import (export_csv)
 
 def export_all_bitbucket_users(bitbucket_workspace, bitbucket_user, bitbucket_token, export_filename):
     page = 1
-    pagelen = 50
+    pagelen = 100
     number_of_results = 0
     first_call = True
     users_list = []
 
     print('{} - INFO - Reading Bitbucket users from Bitbucket Cloud API'.format(datetime.datetime.now().strftime("%Y%m%d %H:%M:%S")))
-    while first_call == True or next_page == True:
-        users_response = requests.get(
-            'https://api.bitbucket.org/2.0/workspaces/{}/members?page={}&pagelen={}'.format(bitbucket_workspace, str(page), str(pagelen)),
-            auth=HTTPBasicAuth(bitbucket_user, bitbucket_token)
-        ).json()
 
-        number_of_results = users_response['size']
-        for user in users_response['values']:
-            users_list.append({
-                'date': datetime.datetime.now().strftime("%Y%m%d"),
-                'display_name': user['user']['display_name'],
-                'type': user['user']['type'],
-                'uuid': user['user']['uuid'],
-                'account_id': user['user']['account_id'],
-                'nickname': user['user']['nickname']
-            })
-        if "next" in users_response:
-            next_page = True
+    while first_call == True or next_page == True:
+
+        retry_for_api_ready = True
+        retry_count = 0
+        while retry_for_api_ready and retry_count<10:
+            http_response = requests.get(
+                'https://api.bitbucket.org/2.0/workspaces/{}/members?page={}&pagelen={}'.format(bitbucket_workspace, str(page), str(pagelen)),
+                auth=HTTPBasicAuth(bitbucket_user, bitbucket_token)
+            )
+            if http_response.status_code == 429:
+                sleep(60)
+                retry_count += 1
+                print('{} - INFO - http response {}, wait and retry again, retry count {} for page {}...'.format(datetime.datetime.now().strftime("%Y%m%d %H:%M:%S"), http_response.status_code, str(retry_count), str(page)))
+            else:
+                retry_for_api_ready = False
+
+        if http_response.status_code == 200:
+            for http_response_item in http_response.json().get('values'):
+                http_response_item_user = http_response_item.get('user')
+                users_list.append({
+                    'date': datetime.datetime.now().strftime("%Y%m%d"),
+                    'display_name': http_response_item_user.get('display_name'),
+                    'type': http_response_item_user.get('type'),
+                    'uuid': http_response_item_user.get('uuid'),
+                    'account_id': http_response_item_user.get('account_id'),
+                    'nickname': http_response_item_user.get('nickname')
+                })
+
+            number_of_results = http_response.json().get('size')
+
+            if "next" in http_response.json():
+                next_page = True
+            else:
+                next_page = False
+            page = page + 1
         else:
             next_page = False
-        page = page + 1
+            print('{} - WARN - http response: {}'.format(datetime.datetime.now().strftime("%Y%m%d %H:%M:%S"), http_response.status_code))
+
         first_call = False
 
     print('{} - INFO - Total users: {}'.format(datetime.datetime.now().strftime("%Y%m%d %H:%M:%S"), str(number_of_results)))

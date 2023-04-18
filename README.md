@@ -32,7 +32,9 @@ De Jira Software, Jira Service Desk y Confluence, se desea obtener la siguiente 
 De Bitbucket se desea obtener la siguiente información:
 
 * Usuarios, grupos, y pertenencia de usuarios a grupos
-* Proyectos, repos, y pertencia de repos a proyectos.
+* Proyectos, repos, y pertenencia de repos a proyectos
+* Commits de los repos
+* Ramas y Tags de los repos
 
 
 ### Introducción a las APIs de Atlassian
@@ -46,7 +48,9 @@ La antigua API v1 de Bitbucket, aunque está deprecada, también nos resulta de 
 
 * [Use Bitbucket REST API version 1](https://support.atlassian.com/bitbucket-cloud/docs/use-bitbucket-rest-api-version-1/)
 
-La mayoría de las API están paginadas, pero no todas, y de las que están paginadas, no todas paginan igual (es decir, utilizar diferentes parámetros para poder paginar, como start ó startAt, aunque en el fondo son muy parecidas). 
+**La mayoría de las API están paginadas**, pero no todas, y de las que están paginadas, no todas paginan de la misma forma (es decir, utilizan diferentes parámetros para poder paginar, como start ó startAt, aunque en el fondo son muy parecidas).
+
+**Atlassian protege sus APIs mediante Rate Limiting**, por lo que tenemos que controlar el status code de la respuesta HTTP, de tal modo que si recibimos un HTTP-429 (Too many requests) deberemos gestionar **esperas y reintentos**.
 
 
 ### Ejemplos de configuración y ejecución
