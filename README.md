@@ -35,6 +35,7 @@ De Bitbucket se desea obtener la siguiente información:
 * Proyectos, repos, y pertenencia de repos a proyectos
 * Commits de los repos
 * Ramas y Tags de los repos
+* git clone de todos los repos
 
 
 ### Introducción a las APIs de Atlassian
@@ -209,6 +210,7 @@ Los siguientes comandos ejecutados en la raíz del Proyecto, muestran:
 
 ```shell
 rm app/export/*
+rm git-clone/*
 
 docker build -t atlassian-exporter .
 docker images
@@ -224,6 +226,8 @@ docker run -v d:/code/elwillie/atlassian-exporter/app/export:/usr/src/app/export
 docker run -v d:/code/elwillie/atlassian-exporter/app/export:/usr/src/app/export --rm atlassian-exporter python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_repos
 docker run -v d:/code/elwillie/atlassian-exporter/app/export:/usr/src/app/export --rm atlassian-exporter python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_repos_commits
 docker run -v d:/code/elwillie/atlassian-exporter/app/export:/usr/src/app/export --rm atlassian-exporter python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=export_all_bitbucket_repos_branches
+
+docker run -v d:/code/elwillie/atlassian-exporter/git-clone:/usr/src/git-clone --rm atlassian-exporter python atlassian-exporter.py --configfile=bitbucket_conn_elwillie.json --action=git_clone_all_bitbucket_repos
 ```
 
 Podemos arrancar una sesión interativa de Bash sobre un Contendor con nuestra imagen Docker, para de este modo, analizar mejor incidencias y problemas que nos puedan surgir, depurar, etc. Suele ser bastante útil.

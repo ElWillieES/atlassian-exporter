@@ -7,7 +7,7 @@ from jira.users import (export_all_jira_groups, export_all_jira_groups_members, 
 from jira.jira import (export_all_jira_projects)
 from jira.confluence import (export_all_confluence_spaces)
 from bitbucket.users import (export_all_bitbucket_users, export_all_bitbucket_groups_and_members)
-from bitbucket.workspace import (export_all_bitbucket_projects, export_all_bitbucket_repos, export_all_bitbucket_repos_commits, export_all_bitbucket_repos_branches)
+from bitbucket.workspace import (export_all_bitbucket_projects, export_all_bitbucket_repos, export_all_bitbucket_repos_commits, export_all_bitbucket_repos_branches, git_clone_all_bitbucket_repos)
 
 
 # Press the green button in the gutter to run the script.
@@ -69,3 +69,7 @@ if __name__ == '__main__':
     elif action == "export_all_bitbucket_repos_branches":
         bitbucket_workspace, bitbucket_user, bitbucket_token = get_bitbucket_config_file(config_path + config_file)
         export_all_bitbucket_repos_branches(bitbucket_workspace, bitbucket_user, bitbucket_token, export_path + "{}-bitbucket-branches-{}.csv".format(current_date, bitbucket_workspace))
+
+    elif action == "git_clone_all_bitbucket_repos":
+        bitbucket_workspace, bitbucket_user, bitbucket_token = get_bitbucket_config_file(config_path + config_file)
+        git_clone_all_bitbucket_repos(bitbucket_workspace, bitbucket_user, bitbucket_token)

@@ -3,7 +3,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 from util.export import (export_csv)
 from time import sleep
-
+import os
 
 def export_all_bitbucket_projects(bitbucket_workspace, bitbucket_user, bitbucket_token, export_filename):
     page = 1
@@ -323,3 +323,15 @@ def get_bitbucket_repo_branches(bitbucket_workspace, bitbucket_user, bitbucket_t
     print('{} - INFO - Reading Bitbucket repo branches from Bitbucket Cloud API for repo slug {}: {}'.format(datetime.datetime.now().strftime("%Y%m%d %H:%M:%S"), repo_slug, number_of_results))
 
     return repo_branches_list
+
+
+def git_clone_all_bitbucket_repos(bitbucket_workspace, bitbucket_user, bitbucket_token):
+
+    repos_list = get_all_bitbucket_repos(bitbucket_workspace, bitbucket_user, bitbucket_token)
+
+    print('{} - INFO - Git clone Bitbucket repos...'.format(datetime.datetime.now().strftime("%Y%m%d %H:%M:%S")))
+
+    for repo in repos_list:
+        git_clone_command = 'git clone https://{}:{}@bitbucket.org/{}/{}.git git-clone/{}'.format(bitbucket_user, bitbucket_token, bitbucket_workspace, repo['repo_slug'], repo['repo_slug'])
+        print('{} - INFO - git clone Bitbucket repo {}...'.format(datetime.datetime.now().strftime("%Y%m%d %H:%M:%S"), repo['repo_slug']))
+        os.system(git_clone_command)

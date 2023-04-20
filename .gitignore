@@ -163,3 +163,5 @@ app/config/
 app/export/
 
 .scannerwork/
+
+git-clone/

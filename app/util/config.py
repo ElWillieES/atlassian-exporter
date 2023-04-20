@@ -27,6 +27,7 @@ def show_help():
     print("                       export_all_bitbucket_repos")
     print("                       export_all_bitbucket_repos_commits")
     print("                       export_all_bitbucket_repos_branches")
+    print("                       git_clone_all_bitbucket_repos")
     print()
     print("Examples:")
     print("atlassian-exporter.py -c atlassian_conn_mysite.json -a export_all_jira_groups_and_members")
@@ -56,7 +57,7 @@ def get_cli_params(cli_args):
         elif opt in ("-a", "--action"):
             action = arg
 
-    if action != "" and action not in ("export_all_jira_groups_and_members", "export_all_jira_users", "export_all_jira_projects", "export_all_confluence_spaces", "export_all_bitbucket_users", "export_all_bitbucket_groups_and_members", "export_all_bitbucket_projects", "export_all_bitbucket_repos", "export_all_bitbucket_repos_commits", "export_all_bitbucket_repos_branches"):
+    if action != "" and action not in ("export_all_jira_groups_and_members", "export_all_jira_users", "export_all_jira_projects", "export_all_confluence_spaces", "export_all_bitbucket_users", "export_all_bitbucket_groups_and_members", "export_all_bitbucket_projects", "export_all_bitbucket_repos", "export_all_bitbucket_repos_commits", "export_all_bitbucket_repos_branches", "git_clone_all_bitbucket_repos"):
         print("The action specified as parameter, is not valid.")
         print()
         action = ""
