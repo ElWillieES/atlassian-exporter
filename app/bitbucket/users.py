@@ -72,34 +72,46 @@ def export_all_bitbucket_groups_and_members(bitbucket_workspace, bitbucket_user,
 
     print('{} - INFO - Reading Bitbucket groups and members from Bitbucket Cloud API'.format(datetime.datetime.now().strftime("%Y%m%d %H:%M:%S")))
 
-    groups_response = requests.get(
-        'https://api.bitbucket.org/1.0/groups/{}/'.format(bitbucket_workspace),
-        auth=HTTPBasicAuth(bitbucket_user, bitbucket_token)
-    ).json()
+    retry_for_api_ready = True
+    retry_count = 0
+    while retry_for_api_ready and retry_count < 10:
+        http_response = requests.get(
+            'https://api.bitbucket.org/1.0/groups/{}/'.format(bitbucket_workspace),
+            auth=HTTPBasicAuth(bitbucket_user, bitbucket_token)
+        )
+        if http_response.status_code == 429:
+            sleep(60)
+            retry_count += 1
+            print('{} - INFO - http response {}, wait and retry again, retry count {}...'.format(datetime.datetime.now().strftime("%Y%m%d %H:%M:%S"), http_response.status_code, str(retry_count)))
+        else:
+            retry_for_api_ready = False
 
-    for group in groups_response:
-        groups_list.append({
-            'date': datetime.datetime.now().strftime("%Y%m%d"),
-            'auto_add': group['auto_add'],
-            'name': group['name'],
-            'slug': group['slug'],
-            'permission': group['permission']
-        })
-        group_count = group_count + 1
-        for group_member in group['members']:
-            groups_members_list.append({
+    if http_response.status_code == 200:
+        for http_response_item in http_response.json():
+            groups_list.append({
                 'date': datetime.datetime.now().strftime("%Y%m%d"),
-                'group_name': group['name'],
-                'group_slug': group['slug'],
-                'is_staff': group_member['is_staff'],
-                'is_active': group_member['is_active'],
-                'nickname': group_member['nickname'],
-                'account_id': group_member['account_id'],
-                'uuid': group_member['uuid'],
-                'display_name': group_member['display_name'],
-                'is_team': group_member['is_team']
+                'auto_add': http_response_item['auto_add'],
+                'name': http_response_item['name'],
+                'slug': http_response_item['slug'],
+                'permission': http_response_item['permission']
             })
-            group_members_count = group_members_count + 1
+            group_count += 1
+            for http_response_item_group_member in http_response_item['members']:
+                groups_members_list.append({
+                    'date': datetime.datetime.now().strftime("%Y%m%d"),
+                    'group_name': http_response_item['name'],
+                    'group_slug': http_response_item['slug'],
+                    'is_staff': http_response_item_group_member['is_staff'],
+                    'is_active': http_response_item_group_member['is_active'],
+                    'nickname': http_response_item_group_member['nickname'],
+                    'account_id': http_response_item_group_member['account_id'],
+                    'uuid': http_response_item_group_member['uuid'],
+                    'display_name': http_response_item_group_member['display_name'],
+                    'is_team': http_response_item_group_member['is_team']
+                })
+                group_members_count += 1
+    else:
+        print('{} - WARN - http response: {}'.format(datetime.datetime.now().strftime("%Y%m%d %H:%M:%S"), http_response.status_code))
 
     print('{} - INFO - Total groups: {}'.format(datetime.datetime.now().strftime("%Y%m%d %H:%M:%S"), str(group_count)))
     print('{} - INFO - Total groups memberships: {}'.format(datetime.datetime.now().strftime("%Y%m%d %H:%M:%S"), str(group_members_count)))

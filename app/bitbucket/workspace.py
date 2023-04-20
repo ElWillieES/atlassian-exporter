@@ -25,7 +25,7 @@ def export_all_bitbucket_projects(bitbucket_workspace, bitbucket_user, bitbucket
                 auth=HTTPBasicAuth(bitbucket_user, bitbucket_token)
             )
             if http_response.status_code == 429:
-                sleep(30)
+                sleep(60)
                 retry_count += 1
                 print('{} - INFO - http response {}, wait and retry again, retry count {} for page {}...'.format(datetime.datetime.now().strftime("%Y%m%d %H:%M:%S"), http_response.status_code, str(retry_count), str(page)))
             else:
@@ -100,7 +100,7 @@ def get_all_bitbucket_repos(bitbucket_workspace, bitbucket_user, bitbucket_token
                 auth=HTTPBasicAuth(bitbucket_user, bitbucket_token)
             )
             if http_response.status_code == 429:
-                sleep(30)
+                sleep(60)
                 retry_count += 1
                 print('{} - INFO - http response {}, wait and retry again, retry count {} for page {}...'.format(datetime.datetime.now().strftime("%Y%m%d %H:%M:%S"), http_response.status_code, str(retry_count), str(page)))
             else:
