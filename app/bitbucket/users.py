@@ -90,24 +90,24 @@ def export_all_bitbucket_groups_and_members(bitbucket_workspace, bitbucket_user,
         for http_response_item in http_response.json():
             groups_list.append({
                 'date': datetime.datetime.now().strftime("%Y%m%d"),
-                'auto_add': http_response_item['auto_add'],
-                'name': http_response_item['name'],
-                'slug': http_response_item['slug'],
-                'permission': http_response_item['permission']
+                'auto_add': http_response_item.get('auto_add'),
+                'name': http_response_item.get('name'),
+                'slug': http_response_item.get('slug'),
+                'permission': http_response_item.get('permission')
             })
             group_count += 1
             for http_response_item_group_member in http_response_item['members']:
                 groups_members_list.append({
                     'date': datetime.datetime.now().strftime("%Y%m%d"),
-                    'group_name': http_response_item['name'],
-                    'group_slug': http_response_item['slug'],
-                    'is_staff': http_response_item_group_member['is_staff'],
-                    'is_active': http_response_item_group_member['is_active'],
-                    'nickname': http_response_item_group_member['nickname'],
-                    'account_id': http_response_item_group_member['account_id'],
-                    'uuid': http_response_item_group_member['uuid'],
-                    'display_name': http_response_item_group_member['display_name'],
-                    'is_team': http_response_item_group_member['is_team']
+                    'group_name': http_response_item.get('name'),
+                    'group_slug': http_response_item.get('slug'),
+                    'is_staff': http_response_item_group_member.get('is_staff'),
+                    'is_active': http_response_item_group_member.get('is_active'),
+                    'nickname': http_response_item_group_member.get('nickname'),
+                    'account_id': http_response_item_group_member.get('account_id'),
+                    'uuid': http_response_item_group_member.get('uuid'),
+                    'display_name': http_response_item_group_member.get('display_name'),
+                    'is_team': http_response_item_group_member.get('is_team')
                 })
                 group_members_count += 1
     else:
