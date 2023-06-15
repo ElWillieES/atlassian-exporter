@@ -175,6 +175,9 @@ def get_bitbucket_repo_commits(bitbucket_workspace, bitbucket_user, bitbucket_to
 
     while first_call == True or next_page == True:
 
+        # Since 2023/06/09 is needed to add a delay to prevent the process from getting stuck when there are lots of repos and commits
+        sleep(3)
+
         retry_for_api_ready = True
         retry_count = 0
         while retry_for_api_ready and retry_count<10:
@@ -273,6 +276,9 @@ def get_bitbucket_repo_branches(bitbucket_workspace, bitbucket_user, bitbucket_t
     print('{} - INFO - Reading Bitbucket repo branches from Bitbucket Cloud API for repo slug {}'.format(datetime.datetime.now().strftime("%Y%m%d %H:%M:%S"), repo_slug))
 
     while first_call == True or next_page == True:
+
+        # Since 2023/06/09 is need to add a delay to prevent the process from getting stuck when there are lots of repos and branches/tags
+        sleep(3)
 
         retry_for_api_ready = True
         retry_count = 0
